@@ -89,10 +89,10 @@ export default function Login() {
             Don't have an account? <Link to="/register">Create one</Link>
           </p>
 
-          <div className="auth-demo-hint">
+          {/* <div className="auth-demo-hint">
             <span className="material-icons-outlined" style={{ fontSize: 13, marginRight: 4 }}>info</span>
             Demo: omar@macrometrics.app / omar123
-          </div>
+          </div> */}
         </form>
       </div>
     </motion.div>

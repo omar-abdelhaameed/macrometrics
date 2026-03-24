@@ -1,0 +1,221 @@
+/* ============================================================
+   MacroMetrics — Design System Tokens
+   Extracted from Stitch "Meal Logger & Search" project
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+
+:root {
+  /* ── Surface Hierarchy ───────────────────────────────── */
+  --surface:                  #131313;
+  --surface-dim:              #131313;
+  --surface-bright:           #393939;
+  --surface-container-lowest: #0E0E0E;
+  --surface-container-low:    #1C1B1B;
+  --surface-container:        #201F1F;
+  --surface-container-high:   #2A2A2A;
+  --surface-container-highest:#353534;
+  --surface-variant:          #353534;
+
+  /* ── Primary (Neon Green) ────────────────────────────── */
+  --primary:                  #EFFFE3;
+  --primary-container:        #39FF14;
+  --primary-fixed:            #79FF5B;
+  --primary-fixed-dim:        #2AE500;
+  --on-primary:               #053900;
+  --on-primary-container:     #107100;
+
+  /* ── Secondary (Electric Blue) ──────────────────────── */
+  --secondary:                #B0C6FF;
+  --secondary-container:      #568DFF;
+  --on-secondary:             #002D6F;
+  --on-secondary-container:   #002661;
+
+  /* ── Tertiary (Alert Orange) ────────────────────────── */
+  --tertiary:                 #FFF9F7;
+  --tertiary-container:       #FFD4CB;
+  --on-tertiary:              #630E00;
+
+  /* ── Error ──────────────────────────────────────────── */
+  --error:                    #FFB4AB;
+  --error-container:          #93000A;
+
+  /* ── Neutrals ───────────────────────────────────────── */
+  --on-surface:               #E5E2E1;
+  --on-surface-variant:       #BACCB0;
+  --on-background:            #E5E2E1;
+  --outline:                  #85967C;
+  --outline-variant:          #3C4B35;
+  --inverse-surface:          #E5E2E1;
+  --inverse-on-surface:       #313030;
+  --inverse-primary:          #106E00;
+
+  /* ── Typography ─────────────────────────────────────── */
+  --font-headline:            'Plus Jakarta Sans', sans-serif;
+  --font-body:                'Plus Jakarta Sans', sans-serif;
+
+  /* ── Typography Scale ───────────────────────────────── */
+  --display-lg:               3.5rem;
+  --display-md:               2.8rem;
+  --display-sm:               2.2rem;
+  --headline-lg:              2rem;
+  --headline-md:              1.75rem;
+  --headline-sm:              1.5rem;
+  --title-lg:                 1.375rem;
+  --title-md:                 1rem;
+  --body-lg:                  1rem;
+  --body-md:                  0.875rem;
+  --body-sm:                  0.75rem;
+  --label-lg:                 0.875rem;
+  --label-md:                 0.75rem;
+  --label-sm:                 0.6875rem;
+
+  /* ── Spacing ────────────────────────────────────────── */
+  --spacing-1:                0.25rem;
+  --spacing-2:                0.5rem;
+  --spacing-3:                0.75rem;
+  --spacing-4:                1rem;
+  --spacing-5:                1.25rem;
+  --spacing-6:                1.5rem;
+  --spacing-8:                2rem;
+  --spacing-10:               2.5rem;
+  --spacing-12:               3rem;
+  --spacing-16:               4rem;
+  --spacing-20:               5rem;
+
+  /* ── Roundness ──────────────────────────────────────── */
+  --radius-sm:                6px;
+  --radius-md:                12px;
+  --radius-lg:                16px;
+  --radius-xl:                24px;
+  --radius-full:              9999px;
+
+  /* ── Transitions ────────────────────────────────────── */
+  --transition-fast:          150ms ease;
+  --transition-base:          250ms ease;
+  --transition-slow:          400ms ease;
+
+  /* ── Macro Colors ───────────────────────────────────── */
+  --macro-protein:            #39FF14;
+  --macro-carbs:              #568DFF;
+  --macro-fats:               #FFB4A4;
+}
+
+/* ── Global Reset & Base ──────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--surface);
+  color: var(--on-surface);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+  outline: none;
+  border: none;
+}
+
+/* ── Scrollbar Styling ────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-container-highest);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
+
+/* ── Utility Classes ──────────────────────────────────── */
+.glass {
+  background: rgba(53, 53, 52, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.15),
+              0 0 40px rgba(57, 255, 20, 0.05);
+}
+
+.neon-glow-text {
+  text-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+}
+
+.ambient-glow {
+  box-shadow: 0 0 40px rgba(239, 255, 227, 0.04);
+}
+
+/* ============================================================
+   Light Mode Overrides
+   ============================================================ */
+
+[data-theme="light"] {
+  --surface:                  #FAFAFA;
+  --surface-dim:              #F0F0F0;
+  --surface-bright:           #FFFFFF;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low:    #F5F5F5;
+  --surface-container:        #EFEFEF;
+  --surface-container-high:   #E8E8E8;
+  --surface-container-highest:#E0E0E0;
+  --surface-variant:          #E0E0E0;
+  --on-surface:               #1A1A1A;
+  --on-surface-variant:       #5A6A50;
+  --on-background:            #1A1A1A;
+  --outline:                  #85967C;
+  --outline-variant:          #C5D4BC;
+  --inverse-surface:          #313030;
+  --inverse-on-surface:       #F5F5F5;
+  --on-primary:               #FFFFFF;
+  --error:                    #D32F2F;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #F5F5F5;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #C0C0C0;
+}
+
+/* ── Smooth mode transitions ── */
+body, .sidebar, .stat-card, .card, .settings-section, .profile-hero, .profile-stat, .profile-target, .activity-chip, .ingredient-card, .meal-builder, .theme-card, .auth-card {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

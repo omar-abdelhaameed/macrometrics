@@ -1,0 +1,52 @@
+# ======================
+# ENVIRONMENT & SECRETS
+# ======================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+
+# ======================
+# BACKEND / PYTHON
+# ======================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+*.db
+*.sqlite
+*.sqlite3
+macro_tracker.db
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ======================
+# FRONTEND / NODE
+# ======================
+node_modules/
+dist/
+dist-ssr/
+*.log
+.env.local
+.env.*.local
+
+# ======================
+# IDE & OS
+# ======================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ======================
+# TEMP FILES
+# ======================
+*.tmp
+*.temp
+nul

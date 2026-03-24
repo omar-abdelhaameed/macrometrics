@@ -22,6 +22,12 @@ config = context.config
 database_url = os.getenv("DATABASE_URL")
 if not database_url:
     raise ValueError("DATABASE_URL environment variable is required for migrations")
+
+# Neon.tech uses postgres:// but SQLAlchemy 2.0 requires postgresql://
+if database_url.startswith("postgres://"):
+    database_url = "postgresql://" + database_url[10:]
+    print("  → Converted Neon postgres:// to postgresql://")
+
 config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.

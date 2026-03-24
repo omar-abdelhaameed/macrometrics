@@ -80,5 +80,25 @@ export const sendChatMessage = (message, history = []) =>
 export const fetchChatContext = () => api('/chat/context');
 
 // ── Supplements ───────────────────────────────────────
-export const fetchSupplements = () => api('/supplements');
+export const fetchSupplements = () => api('/supplements/catalog');
 export const fetchSupplementCategories = () => api('/supplements/categories');
+export const fetchRecommendations = () => api('/supplements/recommendations');
+export const fetchMyStack = () => api('/supplements/my-stack');
+
+export const addToStack = (data) =>
+  api('/supplements/my-stack', { method: 'POST', body: JSON.stringify(data) });
+
+export const removeFromStack = (stackItemId) =>
+  api(`/supplements/my-stack/${stackItemId}`, { method: 'DELETE' });
+
+export const logSupplement = (userSupplementId, date) =>
+  api('/supplements/log', { 
+    method: 'POST', 
+    body: JSON.stringify({ 
+      user_supplement_id: userSupplementId,
+      date: date || new Date().toISOString().split('T')[0]
+    }) 
+  });
+
+export const fetchSupplementHistory = (days = 7) =>
+  api(`/supplements/log/history?days=${days}`);

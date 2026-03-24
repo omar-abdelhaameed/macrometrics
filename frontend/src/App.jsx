@@ -31,7 +31,7 @@ function AppLayout() {
   return (
     <div className="min-h-screen bg-[var(--surface)]">
       <Sidebar />
-      <main className="ml-[260px] p-10 min-h-screen">
+      <main className="pl-[72px] lg:pl-[72px] p-8 min-h-screen transition-all duration-300">
         <Routes>
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/log" element={<ProtectedRoute><MealLogger /></ProtectedRoute>} />

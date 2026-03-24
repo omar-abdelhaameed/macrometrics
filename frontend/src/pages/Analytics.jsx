@@ -7,7 +7,7 @@ import {
 import { fetchAnalyticsSummary, fetchWeightTrend, fetchMacroComposition } from '../api';
 import { useToast } from '../components/ToastProvider';
 
-const MACRO_COLORS = ['#39FF14', '#568DFF', '#FFB4A4'];
+const MACRO_COLORS = ['#B4FF39', '#3B82F6', '#FF6B4A'];
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState('Today');
@@ -107,16 +107,22 @@ export default function Analytics() {
                 <LineChart data={weightData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(53,53,52,0.5)" />
                   <XAxis dataKey="date" tick={{ fill: '#BACCB0', fontSize: 11 }} axisLine={{ stroke: '#3C4B35' }} />
-                  <YAxis yAxisId="weight" orientation="left" tick={{ fill: '#39FF14', fontSize: 11 }} domain={['auto', 'auto']}
-                    label={{ value: 'Weight (lbs)', angle: -90, position: 'insideLeft', fill: '#39FF14', fontSize: 11 }}
+                  <YAxis yAxisId="weight" orientation="left" tick={{ fill: '#B4FF39', fontSize: 11 }} domain={['auto', 'auto']}
+                    label={{ value: 'Weight (lbs)', angle: -90, position: 'insideLeft', fill: '#B4FF39', fontSize: 11 }}
                   />
-                  <YAxis yAxisId="calories" orientation="right" tick={{ fill: '#568DFF', fontSize: 11 }} domain={['auto', 'auto']}
-                    label={{ value: 'Calories', angle: 90, position: 'insideRight', fill: '#568DFF', fontSize: 11 }}
+                  <YAxis yAxisId="calories" orientation="right" tick={{ fill: '#3B82F6', fontSize: 11 }} domain={['auto', 'auto']}
+                    label={{ value: 'Calories', angle: 90, position: 'insideRight', fill: '#3B82F6', fontSize: 11 }}
                   />
-                  <Tooltip contentStyle={{ background: '#353534', border: 'none', borderRadius: 8, color: '#E5E2E1', boxShadow: '0 0 20px rgba(0,0,0,0.3)' }} />
-                  <Line yAxisId="weight" type="monotone" dataKey="weight" stroke="#39FF14" strokeWidth={2} dot={{ fill: '#39FF14', r: 4, strokeWidth: 0 }} connectNulls />
-                  <Line yAxisId="calories" type="monotone" dataKey="calories" stroke="#568DFF" strokeWidth={2} strokeDasharray="5 5" dot={{ fill: '#568DFF', r: 3, strokeWidth: 0 }} />
+                  <Tooltip contentStyle={{ background: '#10141C', border: '1px solid rgba(57,255,20,0.2)', borderRadius: 12, color: '#E5E2E1', boxShadow: '0 0 30px rgba(57,255,20,0.15)' }} />
+                  <Line yAxisId="weight" type="monotone" dataKey="weight" stroke="#B4FF39" strokeWidth={2} dot={{ fill: '#B4FF39', r: 4, strokeWidth: 0 }} connectNulls filter="url(#glow)" />
+                  <Line yAxisId="calories" type="monotone" dataKey="calories" stroke="#3B82F6" strokeWidth={2} strokeDasharray="5 5" dot={{ fill: '#3B82F6', r: 3, strokeWidth: 0 }} />
                 </LineChart>
+                <defs>
+                  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
               </ResponsiveContainer>
             ) : (
               <div className="empty-state">

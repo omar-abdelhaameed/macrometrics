@@ -18,6 +18,15 @@ router = APIRouter(prefix="/ingredients", tags=["Ingredients"])
 
 # ==================== SMART SEARCH ENDPOINT ====================
 
+def normalize_arabic_search(text: str) -> str:
+    """Normalize Arabic text for search: أ/إ/ا -> ا, ة -> ه"""
+    if not text:
+        return text
+    text = text.replace('أ', 'ا').replace('إ', 'ا').replace('آ', 'ا')
+    text = text.replace('ة', 'ه')
+    return text
+
+
 @router.get("/search")
 @limiter.limit("30/minute")
 async def search_foods_smart(
@@ -29,49 +38,71 @@ async def search_foods_smart(
 ):
     """
     Commercial-Grade Hybrid Food Search:
-    - 0-latency PostgreSQL search through curated 'Golden Foods' (top 500 whole foods).
-    - Perfect Raw vs Cooked algorithmic sorting.
-    - Graceful fallback API to USDA for long-tail items.
+    - 0-latency PostgreSQL search through ALL local foods (Golden + Egyptian + USDA + User).
+    - Arabic text normalization for better matching.
+    - Graceful fallback to USDA API for long-tail items.
     """
     try:
-        from sqlalchemy import or_, desc
+        from sqlalchemy import or_, desc, func
         
         if lang == "auto":
             lang = "ar" if is_arabic(query) else "en"
-            
-        translated_query = translate_search_query(query) if lang == "ar" else query
         
-        # 1) Lightning-fast check against Golden Database
-        search_term = f"%{query}%".lower()
-        translated_term = f"%{translated_query}%".lower()
+        # Normalize Arabic search query
+        normalized_query = normalize_arabic_search(query) if lang == "ar" else query
+        search_term = f"%{query}%"
+        normalized_term = f"%{normalized_query}%"
         
-        golden_hits = db.query(Ingredient).filter(
-            Ingredient.is_golden == True,
+        # 1) Search ALL foods in database (not just golden)
+        # Include: name, name_ar, and handle Arabic normalization
+        all_hits = db.query(Ingredient).filter(
             or_(
-                Ingredient.name.ilike(search_term),
-                Ingredient.name_ar.ilike(search_term),
-                Ingredient.name.ilike(translated_term)
+                func.lower(Ingredient.name).ilike(search_term.lower()),
+                func.lower(Ingredient.name_ar).ilike(search_term.lower()),
+                func.lower(Ingredient.name).ilike(normalized_term.lower()),
+                func.lower(Ingredient.name_ar).ilike(normalized_term.lower()),
+                func.lower(Ingredient.name_ar).ilike(normalized_query.lower() + "%")
             )
         ).order_by(desc(Ingredient.popularity_score)).limit(max_results).all()
         
-        # Format Golden Results
+        # Separate golden/priority foods from regular
+        golden_hits = [h for h in all_hits if h.is_golden]
+        regular_hits = [h for h in all_hits if not h.is_golden]
+        
+        # Format all results
         results = []
+        
+        # First add golden/priority foods
         for g in golden_hits:
             results.append({
                 "fdc_id": g.fdc_id,
                 "name": f"{g.name_ar} - {g.name}" if g.name_ar else g.name,
                 "category": g.category,
-                "calories_per_100g": g.calories_per_100g,
-                "protein_per_100g": g.protein_per_100g,
-                "carbs_per_100g": g.carbs_per_100g,
-                "fats_per_100g": g.fats_per_100g,
-                "source": "MacroMetrics Core",
+                "calories_per_100g": g.calories_per_100g or 0,
+                "protein_per_100g": g.protein_per_100g or 0,
+                "carbs_per_100g": g.carbs_per_100g or 0,
+                "fats_per_100g": g.fats_per_100g or 0,
+                "source": g.source or "Local",
                 "is_priority": True
+            })
+        
+        # Then add regular foods (Egyptian, USDA, user-saved)
+        for r in regular_hits:
+            results.append({
+                "fdc_id": r.fdc_id,
+                "name": f"{r.name_ar} - {r.name}" if r.name_ar else r.name,
+                "category": r.category,
+                "calories_per_100g": r.calories_per_100g or 0,
+                "protein_per_100g": r.protein_per_100g or 0,
+                "carbs_per_100g": r.carbs_per_100g or 0,
+                "fats_per_100g": r.fats_per_100g or 0,
+                "source": r.source or "Local",
+                "is_priority": False
             })
             
         # 2) Commercial Fallback mechanism (Hit USDA API only if sparse results)
         if len(results) < max_results:
-            usda_results = await search_foods(translated_query, page_size=max_results)
+            usda_results = await search_foods(normalized_query, page_size=max_results)
             existing_ids = {r["fdc_id"] for r in results if r.get("fdc_id")}
             
             for food in usda_results:
@@ -84,7 +115,7 @@ async def search_foods_smart(
         return {
             "query": query,
             "language": lang,
-            "translated_query": translated_query,
+            "normalized_query": normalized_query,
             "is_priority_search": len(golden_hits) > 0,
             "results": results,
             "total": len(results)

@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { fetchIngredients, searchUSDA, saveFromUSDA, logMeal } from '../api';
 import { useToast } from '../components/ToastProvider';
+import NumberInput from '../components/NumberInput';
+
+const MEAL_TYPES = [
+  { value: 'breakfast', label: 'Breakfast', icon: '🌅' },
+  { value: 'lunch', label: 'Lunch', icon: '☀️' },
+  { value: 'dinner', label: 'Dinner', icon: '🌙' },
+  { value: 'snack', label: 'Snack', icon: '🍿' },
+  { value: 'pre_workout', label: 'Pre-Workout', icon: '⚡' },
+  { value: 'post_workout', label: 'Post-Workout', icon: '💪' },
+];
 
 export default function MealLogger() {
   const [ingredients, setIngredients] = useState([]);
@@ -128,19 +138,23 @@ export default function MealLogger() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
         {/* ── Left: Meal Builder ── */}
         <div className="meal-builder">
-          <div className="meal-builder__title">Meal Builder</div>
+          <div className="meal-builder__title">
+            <span className="material-icons-outlined text-[var(--primary)]">restaurant</span>
+            Meal Builder
+          </div>
 
           <div className="meal-type-selector">
-            {['breakfast', 'lunch', 'dinner', 'snack', 'pre_workout', 'post_workout'].map((type) => (
+            {MEAL_TYPES.map((type) => (
               <button
-                key={type}
-                className={`meal-type-chip ${mealType === type ? 'active' : ''}`}
-                onClick={() => setMealType(type)}
+                key={type.value}
+                className={`meal-type-chip ${mealType === type.value ? 'active' : ''}`}
+                onClick={() => setMealType(type.value)}
               >
-                {type.replace('_', ' ')}
+                <span className="meal-type-icon">{type.icon}</span>
+                <span className="meal-type-label">{type.label}</span>
               </button>
             ))}
           </div>
@@ -160,13 +174,14 @@ export default function MealLogger() {
                   </div>
                 </div>
                 <div className="builder-item__serving">
-                  <input
-                    type="number"
+                  <NumberInput
                     value={ing.serving_size_g}
-                    onChange={(e) => updateServing(ing.id, e.target.value)}
-                    min="1"
+                    onChange={(val) => updateServing(ing.id, val)}
+                    min={1}
+                    max={2000}
+                    step={10}
+                    suffix="g"
                   />
-                  <span>g</span>
                 </div>
                 <button className="builder-item__remove" onClick={() => removeIngredient(ing.id)}>
                   <span className="material-icons-outlined">close</span>
@@ -219,7 +234,7 @@ export default function MealLogger() {
               <span className="material-icons-outlined text-[var(--on-surface-variant)] absolute left-3 top-1/2 -translate-y-1/2">search</span>
               <input
                 type="text"
-                placeholder={searchMode === 'local' ? 'Search Saved Foods...' : 'Search Global Database...'}
+                placeholder={searchMode === 'local' ? 'Search your saved foods...' : 'Search foods, brands, or USDA database...'}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full h-full pl-10 pr-4 bg-transparent outline-none text-sm text-[var(--on-surface)]"

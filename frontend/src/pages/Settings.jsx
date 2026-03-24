@@ -58,17 +58,14 @@ export default function Settings() {
           <span className="material-icons-outlined">dark_mode</span>
           <div>
             <div className="settings-section__title">Display Mode</div>
-            <div className="settings-section__desc">Switch between light and dark themes</div>
           </div>
         </div>
         <div className="unit-toggle">
           <button className={`unit-option ${theme === 'dark' ? 'active' : ''}`} onClick={() => theme !== 'dark' && handleModeChange()}>
             <div className="unit-option__label">🌙 Dark</div>
-            <div className="unit-option__desc">AMOLED-friendly</div>
           </button>
           <button className={`unit-option ${theme === 'light' ? 'active' : ''}`} onClick={() => theme !== 'light' && handleModeChange()}>
             <div className="unit-option__label">☀️ Light</div>
-            <div className="unit-option__desc">High contrast</div>
           </button>
         </div>
       </div>
@@ -79,17 +76,14 @@ export default function Settings() {
           <span className="material-icons-outlined">straighten</span>
           <div>
             <div className="settings-section__title">Measurement Units</div>
-            <div className="settings-section__desc">Weight, height, and body composition display</div>
           </div>
         </div>
         <div className="unit-toggle">
           <button className={`unit-option ${currentUnit === 'metric' ? 'active' : ''}`} onClick={() => currentUnit !== 'metric' && handleUnitChange('metric')}>
             <div className="unit-option__label">📐 Metric</div>
-            <div className="unit-option__desc">kg, cm, °C</div>
           </button>
           <button className={`unit-option ${currentUnit === 'imperial' ? 'active' : ''}`} onClick={() => currentUnit !== 'imperial' && handleUnitChange('imperial')}>
             <div className="unit-option__label">📏 Imperial</div>
-            <div className="unit-option__desc">lbs, in, °F</div>
           </button>
         </div>
       </div>
@@ -100,7 +94,6 @@ export default function Settings() {
           <span className="material-icons-outlined">notifications</span>
           <div>
             <div className="settings-section__title">Notifications</div>
-            <div className="settings-section__desc">Configure what alerts you receive</div>
           </div>
         </div>
         <div className="settings-toggles">
@@ -129,7 +122,6 @@ export default function Settings() {
           <span className="material-icons-outlined">account_circle</span>
           <div>
             <div className="settings-section__title">Account</div>
-            <div className="settings-section__desc">Manage your session</div>
           </div>
         </div>
         <div className="data-actions">
@@ -141,10 +133,9 @@ export default function Settings() {
       </div>
 
       {/* ── About ── */}
-      <div className="settings-section settings-about">
+      <div className="settings-about">
         <div className="settings-about__logo">MacroMetrics</div>
-        <div className="settings-about__version">Version 1.1.0 • Performance Lab</div>
-        <div className="settings-about__stack">React + FastAPI + PostgreSQL</div>
+        <div className="settings-about__meta">v1.1.0 • Performance Lab</div>
       </div>
     </motion.div>
   );

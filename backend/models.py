@@ -4,7 +4,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from database import Base
 import enum
-from datetime import datetime
+from datetime import datetime, date
 
 
 class MealType(str, enum.Enum):
@@ -14,6 +14,24 @@ class MealType(str, enum.Enum):
     snack = "snack"
     post_workout = "post_workout"
     pre_workout = "pre_workout"
+
+
+class SupplementTime(str, enum.Enum):
+    morning = "morning"
+    afternoon = "afternoon"
+    evening = "evening"
+    pre_workout = "pre_workout"
+    post_workout = "post_workout"
+    night = "night"
+    with_meal = "with_meal"
+    before_sleep = "before_sleep"
+
+
+class TargetGoal(str, enum.Enum):
+    cut = "cut"
+    bulk = "bulk"
+    maintain = "maintain"
+    all = "all"
 
 
 class User(Base):
@@ -47,6 +65,8 @@ class User(Base):
 
     daily_logs = relationship("DailyLog", back_populates="user", cascade="all, delete-orphan")
     chat_history = relationship("ChatHistory", back_populates="user", cascade="all, delete-orphan")
+    user_supplement_stack = relationship("UserSupplementStack", back_populates="user", cascade="all, delete-orphan")
+    daily_supplement_logs = relationship("DailySupplementLog", back_populates="user", cascade="all, delete-orphan")
 
 
 class Ingredient(Base):
@@ -123,26 +143,64 @@ class MealIngredient(Base):
     ingredient = relationship("Ingredient", back_populates="meal_ingredients")
 
 
-class Supplement(Base):
-    __tablename__ = "supplements"
+class SupplementCatalog(Base):
+    """Global library of vitamins/supplements"""
+    __tablename__ = "supplement_catalog"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False)
-    default_daily_dose = Column(String(50), nullable=False)
-    category = Column(String(50), nullable=False)
+    name = Column(String(100), nullable=False, unique=True)
+    description = Column(Text, nullable=True)
+    standard_dosage = Column(Float, nullable=False)
+    unit = Column(String(20), nullable=False)  # mg, g, IU, mcg, capsule
+    category = Column(String(50), nullable=False)  # Protein, Vitamin, Mineral, Amino Acid, Other
+    target_goal = Column(String(20), default="all")  # cut, bulk, maintain, all
+    benefits = Column(Text, nullable=True)
+    recommended_for_activity = Column(String(50), nullable=True)  # sedentary, light, moderate, active, very_active
     is_global = Column(Boolean, default=True)
 
+    user_stacks = relationship("UserSupplementStack", back_populates="supplement")
 
-class UserSupplement(Base):
-    __tablename__ = "user_supplements"
+
+class UserSupplementStack(Base):
+    """User's personal supplement stack"""
+    __tablename__ = "user_supplement_stack"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)  # Added index
-    supplement_name = Column(String(100), nullable=False)
-    dosage = Column(Float, nullable=False)
-    unit = Column(String(20), nullable=False)
-    is_active = Column(Boolean, default=True, index=True)  # Added index
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    supplement_id = Column(Integer, ForeignKey("supplement_catalog.id"), nullable=False)
+    custom_dosage_amount = Column(Float, nullable=False)
+    time_of_day = Column(String(20), default="morning")  # morning, afternoon, evening, pre_workout, post_workout, night, with_meal, before_sleep
+    is_active = Column(Boolean, default=True, index=True)
+    notes = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="user_supplement_stack")
+    supplement = relationship("SupplementCatalog", back_populates="user_stacks")
+    daily_logs = relationship("DailySupplementLog", back_populates="user_supplement", cascade="all, delete-orphan")
+
+
+class DailySupplementLog(Base):
+    """Daily tracking of supplement intake"""
+    __tablename__ = "daily_supplement_log"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    user_supplement_id = Column(Integer, ForeignKey("user_supplement_stack.id"), nullable=False)
+    date = Column(Date, nullable=False, index=True)
+    is_taken = Column(Boolean, default=False)
+    taken_at = Column(DateTime, nullable=True)
+
+    user = relationship("User", back_populates="daily_supplement_logs")
+    user_supplement = relationship("UserSupplementStack", back_populates="daily_logs")
+
+
+# Legacy alias for backward compatibility
+class Supplement(SupplementCatalog):
+    pass
+
+
+class UserSupplement(UserSupplementStack):
+    pass
 
 
 # ── NEW: Chat Memory ──────────────────────────────────────────────────────────

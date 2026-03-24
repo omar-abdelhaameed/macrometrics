@@ -21,7 +21,7 @@ def get_database_url(url: str | None = None) -> str:
     
     # Neon.tech uses postgres:// but SQLAlchemy 2.0 requires postgresql://
     if url.startswith("postgres://"):
-        url = "postgresql://" + url[10:]
+        url = "postgresql://" + url[11:]
         print(f"  → Converted Neon postgres:// to postgresql://")
     
     return url

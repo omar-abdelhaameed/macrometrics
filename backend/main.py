@@ -25,28 +25,24 @@ app = FastAPI(
     version="2.0.0",
 )
 
-# Add rate limiter
+# Add rate limiter back safely
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS — dynamic origins from environment
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
-CORS_ORIGINS = [
-    FRONTEND_URL,
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
-    # Add Vercel preview/production domains here in production
-]
-
+# CORS — permissive for debugging
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_preflights(request: Request, call_next):
+    if request.method == "OPTIONS":
+        logger.info(f"PREFLIGHT: {request.url} | Origin: {request.headers.get('origin')} | Headers: {request.headers.get('access-control-request-headers')}")
+    return await call_next(request)
 
 
 # ==================== Global Exception Handlers ====================
@@ -94,4 +90,12 @@ def root():
         "app": "MacroMetrics API",
         "version": "2.0.0",
         "status": "operational",
+    }
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "database": str(engine.url.render_as_string(hide_password=True)),
+        "cors_regex": r"https?://(localhost|127\.0\.0\.1|.*\.vercel\.app|.*\.koyeb\.app)(:\d+)?/?"
     }

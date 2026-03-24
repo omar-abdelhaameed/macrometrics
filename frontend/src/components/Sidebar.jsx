@@ -37,7 +37,7 @@ function SidebarItem({ icon, label, path, isExpanded }) {
           opacity: isExpanded ? 1 : 0,
           marginLeft: isExpanded ? 16 : 0,
         }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
         <span className="font-medium text-sm tracking-wide">{label}</span>
       </motion.div>
@@ -45,8 +45,7 @@ function SidebarItem({ icon, label, path, isExpanded }) {
   );
 }
 
-export default function Sidebar() {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function Sidebar({ isExpanded, setIsExpanded }) {
   const { user } = useAuth();
 
   return (
@@ -56,7 +55,7 @@ export default function Sidebar() {
       animate={{ width: isExpanded ? 280 : 80 }}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
-      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       {/* --- اللوجو --- */}
       <div className="flex items-center h-20 px-3 mx-3 mt-4 mb-2 overflow-hidden">
@@ -73,7 +72,7 @@ export default function Sidebar() {
             opacity: isExpanded ? 1 : 0,
             marginLeft: isExpanded ? 16 : 0,
           }}
-          transition={{ duration: 0.25, ease: 'easeInOut' }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
           <h1 className="text-lg font-bold text-white tracking-wider font-['Plus_Jakarta_Sans']">
             MACROMETRICS
@@ -116,7 +115,7 @@ export default function Sidebar() {
                 opacity: isExpanded ? 1 : 0,
                 marginLeft: isExpanded ? 16 : 0,
               }}
-              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
               <span className="text-amber-400 font-bold text-sm tracking-widest uppercase">
                 Premium Elite
@@ -151,7 +150,7 @@ export default function Sidebar() {
                 opacity: isExpanded ? 1 : 0,
                 marginLeft: isExpanded ? 16 : 0,
               }}
-              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
               <span className="text-sm font-semibold text-white leading-tight">
                 {user.name || 'Athlete'}

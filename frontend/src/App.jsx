@@ -28,10 +28,15 @@ function AuthRoute({ children }) {
 }
 
 function AppLayout() {
+  const [isSidebarExpanded, setIsSidebarExpanded] = React.useState(false);
+
   return (
     <div className="min-h-screen bg-[var(--surface)]">
-      <Sidebar />
-      <main className="pl-[72px] lg:pl-[72px] p-8 min-h-screen transition-all duration-300">
+      <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
+      <main 
+        className="p-8 min-h-screen transition-all duration-300 ease-in-out"
+        style={{ paddingLeft: isSidebarExpanded ? '280px' : '100px' }}
+      >
         <Routes>
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/log" element={<ProtectedRoute><MealLogger /></ProtectedRoute>} />

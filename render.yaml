@@ -1,0 +1,29 @@
+services:
+  # ==================== PostgreSQL Database ====================
+  - type: postgres
+    name: macrometrics-db
+    plan: free
+    postgresVersion: 16
+    disk:
+      sizeGB: 1
+
+  # ==================== FastAPI Backend ====================
+  - type: web
+    name: macrometrics-backend
+    region: oregon
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: macrometrics-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://your-app.vercel.app
+      - key: PYTHON_VERSION
+        value: "3.12"
+    dockerCommand: docker build -t macrometrics-backend .
+    dockerContext: ./backend
+    dockerfilePath: Dockerfile

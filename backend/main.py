@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -10,26 +11,42 @@ import logging
 
 load_dotenv()
 
-from database import engine
+from database import engine, Base
 from routes import ingredients, meals, daily, users, auth, analytics, chat, supplements
 from rate_limiter import limiter
 
 logger = logging.getLogger("macrometrics")
 
-# NOTE: Database migrations are handled by Alembic
-# Run: alembic upgrade head
+
+# ==================== STARTUP: Auto-create tables ====================
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Run on startup — creates all DB tables if they don't exist."""
+    try:
+        import models  # noqa: F401 — ensures all models are registered
+        Base.metadata.create_all(bind=engine)
+        logger.info("✅ Database tables verified / created successfully.")
+    except Exception as e:
+        logger.error(f"❌ Failed to create database tables: {e}")
+    yield
+    # (shutdown logic here if needed)
+
+
+# ==================== APP ====================
 
 app = FastAPI(
     title="MacroMetrics API",
     description="High-performance REST API for fitness & macro tracking",
     version="2.0.0",
+    lifespan=lifespan,
 )
 
-# Add rate limiter back safely
+# Rate limiter
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS — permissive for debugging
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -38,10 +55,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.middleware("http")
 async def log_preflights(request: Request, call_next):
     if request.method == "OPTIONS":
-        logger.info(f"PREFLIGHT: {request.url} | Origin: {request.headers.get('origin')} | Headers: {request.headers.get('access-control-request-headers')}")
+        logger.info(
+            f"PREFLIGHT: {request.url} | "
+            f"Origin: {request.headers.get('origin')} | "
+            f"Headers: {request.headers.get('access-control-request-headers')}"
+        )
     return await call_next(request)
 
 
@@ -73,7 +95,8 @@ async def general_exception_handler(request: Request, exc: Exception):
     )
 
 
-# Register routers
+# ==================== Routers ====================
+
 app.include_router(auth.router)
 app.include_router(ingredients.router)
 app.include_router(meals.router)
@@ -84,6 +107,8 @@ app.include_router(chat.router)
 app.include_router(supplements.router)
 
 
+# ==================== Base Routes ====================
+
 @app.get("/")
 def root():
     return {
@@ -92,10 +117,10 @@ def root():
         "status": "operational",
     }
 
+
 @app.get("/health")
 def health():
     return {
         "status": "ok",
         "database": str(engine.url.render_as_string(hide_password=True)),
-        "cors_regex": r"https?://(localhost|127\.0\.0\.1|.*\.vercel\.app|.*\.koyeb\.app)(:\d+)?/?"
     }

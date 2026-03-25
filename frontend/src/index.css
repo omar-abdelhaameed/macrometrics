@@ -1372,3 +1372,141 @@ input[type="number"] {
 .bubble-animation {
   animation: bubble-rise 3s ease-in-out infinite;
 }
+
+/* ── Premium Page ─────────────────────────────────────────── */
+.premium-page {
+  @apply max-w-5xl mx-auto;
+}
+
+.premium-hero {
+  @apply text-center mb-12;
+}
+
+.premium-hero h1 {
+  @apply text-4xl md:text-5xl font-bold text-[var(--on-surface)] mb-4;
+}
+
+.premium-highlight {
+  @apply text-[var(--primary)];
+  text-shadow: 0 0 30px var(--protein-glow);
+}
+
+.premium-hero p {
+  @apply text-lg text-[var(--on-surface-variant)] max-w-xl mx-auto;
+}
+
+.premium-plans-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 mb-8;
+}
+
+.premium-plan-card {
+  @apply relative bg-[var(--surface-container)] rounded-3xl p-6 border border-[rgba(255,255,255,0.03)];
+  transition: all 0.3s ease;
+}
+
+.premium-plan-card:hover {
+  @apply border-[rgba(255,255,255,0.08)];
+  transform: translateY(-2px);
+}
+
+.premium-plan-card--featured {
+  @apply border-[var(--primary)]/30;
+  box-shadow: 0 0 40px var(--protein-glow);
+}
+
+.premium-plan-card--current {
+  @apply border-amber-500/50;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.premium-plan-badge {
+  @apply absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--on-primary);
+}
+
+.premium-plan-header {
+  @apply text-center mb-6 pb-6 border-b border-white/5;
+}
+
+.premium-plan-name {
+  @apply text-2xl font-bold text-[var(--on-surface)] mb-2;
+}
+
+.premium-plan-price {
+  @apply flex items-baseline justify-center gap-1 mb-2;
+}
+
+.premium-plan-amount {
+  @apply text-4xl font-bold text-[var(--primary)];
+  text-shadow: 0 0 20px var(--protein-glow);
+}
+
+.premium-plan-period {
+  @apply text-[var(--on-surface-variant)];
+}
+
+.premium-plan-desc {
+  @apply text-sm text-[var(--on-surface-variant)];
+}
+
+.premium-plan-features {
+  @apply space-y-3 mb-6;
+}
+
+.premium-feature-row {
+  @apply flex items-center gap-3;
+}
+
+.premium-feature-icon {
+  @apply text-lg;
+}
+
+.premium-feature-icon.included {
+  @apply text-[var(--protein)];
+}
+
+.premium-feature-icon.excluded {
+  @apply text-[var(--on-surface-variant)] opacity-40;
+}
+
+.premium-feature-text.included {
+  @apply text-[var(--on-surface)];
+}
+
+.premium-feature-text.excluded {
+  @apply text-[var(--on-surface-variant)] opacity-50;
+}
+
+.premium-plan-cta {
+  @apply mt-auto;
+}
+
+.premium-coming-soon {
+  @apply flex items-center justify-center gap-2 py-3 px-6 rounded-xl;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--on-surface-variant);
+}
+
+.premium-coming-soon .material-icons-outlined {
+  @apply text-lg;
+}
+
+.premium-current-plan {
+  @apply py-3 px-6 rounded-xl text-center font-medium;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #0A0A0A;
+}
+
+.premium-footer {
+  @apply text-center text-sm text-[var(--on-surface-variant)] pt-8 border-t border-white/5;
+}
+
+[data-theme="light"] .premium-highlight {
+  text-shadow: 0 0 15px rgba(8, 145, 178, 0.3);
+}
+
+[data-theme="light"] .premium-plan-amount {
+  text-shadow: 0 0 15px rgba(8, 145, 178, 0.3);
+}

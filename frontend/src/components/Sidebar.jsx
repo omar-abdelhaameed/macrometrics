@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { path: '/log',         icon: 'restaurant_menu', label: 'Meal Logger' },
   { path: '/supplements', icon: 'medication',      label: 'Supplements' },
   { path: '/analytics',   icon: 'analytics',       label: 'Analytics'   },
+  { path: '/premium',     icon: 'workspace_premium', label: 'Premium'   },
 ];
 
 function SidebarItem({ icon, label, path, isExpanded }) {

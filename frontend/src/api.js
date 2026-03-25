@@ -8,7 +8,7 @@ function getHeaders() {
 }
 
 async function api(url, options = {}) {
-  const res = await fetch(`${API_BASE}${url}`, {
+  const res = await fetch(`${BASE_URL}${url}`, {
     ...options,
     headers: { ...getHeaders(), ...options.headers },
   });

@@ -1,4 +1,5 @@
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_TIMEOUT = 15000; // 15 seconds
 
 function getHeaders() {
   const headers = { 'Content-Type': 'application/json' };
@@ -8,21 +9,35 @@ function getHeaders() {
 }
 
 async function api(url, options = {}) {
-  const res = await fetch(`${BASE_URL}${url}`, {
-    ...options,
-    headers: { ...getHeaders(), ...options.headers },
-  });
-  if (res.status === 401) {
-    localStorage.removeItem('mm_token');
-    localStorage.removeItem('mm_user');
-    window.location.href = '/login';
-    throw new Error('Session expired');
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+
+  try {
+    const res = await fetch(`${BASE_URL}${url}`, {
+      ...options,
+      headers: { ...getHeaders(), ...options.headers },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (res.status === 401) {
+      localStorage.removeItem('mm_token');
+      localStorage.removeItem('mm_user');
+      window.location.href = '/login';
+      throw new Error('Session expired');
+    }
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.detail || `Request failed (${res.status})`);
+    }
+    return res.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error('Request timed out');
+    }
+    throw error;
   }
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.detail || `Request failed (${res.status})`);
-  }
-  return res.json();
 }
 
 // ── Auth ─────────────────────────────────────────────

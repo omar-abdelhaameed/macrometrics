@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 import logging
+import os
 
 load_dotenv() 
 
@@ -140,10 +141,20 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# Dynamic CORS - read FRONTEND_URL from environment
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://macrometrics.vercel.app")
+CORS_ORIGINS = [
+    FRONTEND_URL,
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -14,10 +14,12 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 
-# Security: Require JWT_SECRET from environment - fail if not set
+# Security: Require JWT_SECRET from environment
+# Fallback provided for development only - MUST be set in production
 SECRET_KEY = os.getenv("JWT_SECRET")
 if not SECRET_KEY:
-    raise ValueError("CRITICAL: JWT_SECRET environment variable is required. Set it in .env file.")
+    print("⚠️ WARNING: JWT_SECRET not set. Using dev fallback - CHANGE IN PRODUCTION!")
+    SECRET_KEY = "dev-fallback-secret-macrometrics-v1-change-in-prod"
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 48  # 48 hours - balance between security and UX

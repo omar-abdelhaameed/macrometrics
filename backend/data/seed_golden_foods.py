@@ -1,4 +1,7 @@
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+load_dotenv()
+
 from database import engine, SessionLocal
 from models import Ingredient
 

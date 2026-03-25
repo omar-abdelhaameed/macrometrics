@@ -53,26 +53,34 @@ export default function Sidebar({ isExpanded, setIsExpanded }) {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       {/* ── Logo ── */}
-      <div className="sidebar-logo flex items-center h-20 px-3 mx-3 mt-4 mb-2 overflow-hidden">
-        <div className="flex items-center justify-center w-6 h-6 shrink-0 text-[var(--primary)]">
+      <div className="flex items-center h-20 px-4 mt-2 mb-2 overflow-hidden">
+        <div className="flex items-center justify-center w-7 h-7 shrink-0 text-[var(--primary)]">
           <span className="material-icons-outlined text-2xl" style={{ filter: 'drop-shadow(0 0 8px var(--primary))' }}>
             fitness_center
           </span>
         </div>
         <motion.div
-          className="sidebar-logo overflow-hidden whitespace-nowrap flex flex-col justify-center"
+          className="overflow-hidden whitespace-nowrap flex flex-col justify-center"
           initial={false}
           animate={{
             width:      isExpanded ? '100%' : 0,
             opacity:    isExpanded ? 1 : 0,
-            marginLeft: isExpanded ? 16 : 0,
+            marginLeft: isExpanded ? 12 : 0,
           }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          <h1 className="text-lg font-bold tracking-wider font-['Plus_Jakarta_Sans']">
+          <h1
+            className="text-base font-bold tracking-wider font-['Plus_Jakarta_Sans'] whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
             MACROMETRICS
           </h1>
-          <span className="text-[10px] uppercase tracking-widest font-mono">
+          <span className="text-[9px] text-[var(--on-surface-variant)] uppercase tracking-[0.2em] font-mono whitespace-nowrap">
             Performance Lab
           </span>
         </motion.div>

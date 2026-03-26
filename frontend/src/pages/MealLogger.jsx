@@ -114,10 +114,11 @@ export default function MealLogger() {
           serving_size_g: s.serving_size_g,
         })),
       });
-      toast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} logged successfully!`);
+      const label = MEAL_TYPES.find(t => t.value === mealType)?.label || mealType;
+      toast.success(`${label} logged successfully!`);
       setSelectedIngredients([]);
     } catch (err) {
-      toast.error(err.message || 'Failed to log meal');
+      toast.error(typeof err === 'string' ? err : err?.detail || err?.message || 'Failed to log meal');
     }
     setLogging(false);
   }
@@ -285,7 +286,7 @@ export default function MealLogger() {
                   <p>{usdaLoading ? 'Searching database...' : 'Search the global food database'}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   {usdaResults.map((food, idx) => {
                     const lName = food.name.toLowerCase();
                     const isRaw = lName.includes('raw') || lName.includes('نيء');

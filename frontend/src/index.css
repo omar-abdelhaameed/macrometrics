@@ -1077,7 +1077,7 @@
   }
 
   .ingredient-card__macros {
-    @apply flex gap-4;
+    @apply flex justify-between md:justify-start gap-2 md:gap-4;
   }
 
   .ingredient-macro {
@@ -1179,7 +1179,7 @@
   }
 
   .builder-item {
-    @apply flex items-center gap-3 p-4 mb-3 rounded-xl bg-[var(--surface-container)] border border-[rgba(255,255,255,0.03)];
+    @apply flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-3 p-3 md:p-4 mb-4 md:mb-3 rounded-xl bg-[var(--surface-container)] border border-[rgba(255,255,255,0.03)];
     transition: all 0.2s ease;
   }
 
@@ -1188,7 +1188,7 @@
   }
 
   .builder-item__info {
-    @apply flex-1 min-w-0;
+    @apply flex-1 min-w-0 w-full sm:w-auto mb-2 sm:mb-0;
   }
 
   .builder-item__name {

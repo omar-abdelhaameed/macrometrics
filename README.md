@@ -278,4 +278,3 @@ Coming soon at **$10/month**:
 ---
 
 *MacroMetrics V2.0 - Science-Backed Nutrition for Elite Athletes*
-*Build with ❤️ for performance athletes worldwide*

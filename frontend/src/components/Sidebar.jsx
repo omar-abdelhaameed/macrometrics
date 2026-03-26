@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 
 const NAV_ITEMS = [
-  { path: '/',            icon: 'dashboard',       label: 'Dashboard'   },
-  { path: '/log',         icon: 'restaurant_menu', label: 'Meal Logger' },
-  { path: '/supplements', icon: 'medication',      label: 'Supplements' },
-  { path: '/analytics',   icon: 'analytics',       label: 'Analytics'   },
-  { path: '/premium',     icon: 'workspace_premium', label: 'Premium'   },
+  { path: '/', icon: 'dashboard', label: 'Dashboard' },
+  { path: '/log', icon: 'restaurant_menu', label: 'Meal Logger' },
+  { path: '/supplements', icon: 'medication', label: 'Supplements' },
+  { path: '/analytics', icon: 'analytics', label: 'Analytics' },
+  { path: '/premium', icon: 'workspace_premium', label: 'Premium' },
 ];
 
 function SidebarItem({ icon, label, path, isExpanded }) {
@@ -16,8 +16,7 @@ function SidebarItem({ icon, label, path, isExpanded }) {
     <NavLink
       to={path}
       className={({ isActive }) =>
-        `sidebar-link flex items-center h-12 px-3 mx-3 my-1 rounded-xl transition-all duration-200 overflow-hidden ${
-          isActive ? 'active' : ''
+        `sidebar-link flex items-center h-12 px-3 mx-3 my-1 rounded-xl transition-all duration-200 overflow-hidden ${isActive ? 'active' : ''
         }`
       }
     >
@@ -29,9 +28,9 @@ function SidebarItem({ icon, label, path, isExpanded }) {
         className="flex items-center overflow-hidden whitespace-nowrap"
         initial={false}
         animate={{
-          width:       isExpanded ? '100%' : 0,
-          opacity:     isExpanded ? 1 : 0,
-          marginLeft:  isExpanded ? 16 : 0,
+          width: isExpanded ? '100%' : 0,
+          opacity: isExpanded ? 1 : 0,
+          marginLeft: isExpanded ? 16 : 0,
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
@@ -64,8 +63,8 @@ export default function Sidebar({ isExpanded, setIsExpanded }) {
           className="overflow-hidden whitespace-nowrap flex flex-col justify-center"
           initial={false}
           animate={{
-            width:      isExpanded ? '100%' : 0,
-            opacity:    isExpanded ? 1 : 0,
+            width: isExpanded ? '100%' : 0,
+            opacity: isExpanded ? 1 : 0,
             marginLeft: isExpanded ? 12 : 0,
           }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -136,8 +135,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }) {
           <NavLink
             to="/profile"
             className={({ isActive }) =>
-              `sidebar-link flex items-center h-14 px-3 mx-3 my-1 rounded-xl transition-all duration-200 overflow-hidden ${
-                isActive ? 'active' : ''
+              `sidebar-link flex items-center h-14 px-3 mx-3 my-1 rounded-xl transition-all duration-200 overflow-hidden ${isActive ? 'active' : ''
               }`
             }
           >
@@ -149,8 +147,8 @@ export default function Sidebar({ isExpanded, setIsExpanded }) {
               className="flex flex-col justify-center overflow-hidden whitespace-nowrap"
               initial={false}
               animate={{
-                width:      isExpanded ? '100%' : 0,
-                opacity:    isExpanded ? 1 : 0,
+                width: isExpanded ? '100%' : 0,
+                opacity: isExpanded ? 1 : 0,
                 marginLeft: isExpanded ? 16 : 0,
               }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}

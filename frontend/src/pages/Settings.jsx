@@ -135,7 +135,7 @@ export default function Settings() {
       {/* ── About ── */}
       <div className="settings-about">
         <div className="settings-about__logo">MacroMetrics</div>
-        <div className="settings-about__meta">v1.1.0 • Performance Lab</div>
+        <div className="settings-about__meta">v1.1.0 • Elloader Labs</div>
       </div>
     </motion.div>
   );

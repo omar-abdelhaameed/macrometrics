@@ -15,7 +15,7 @@ const PLANS = {
       { text: 'One meal type per day', included: true },
       { text: 'Basic analytics (7-day)', included: true },
       { text: 'Golden Foods database', included: true },
-      { text: 'AI Coach (Gemini)', included: false },
+      { text: 'AI Coach ', included: false },
       { text: 'USDA database (900k+ foods)', included: false },
       { text: 'Advanced analytics (30-day+)', included: false },
       { text: 'Supplement tracking', included: false },

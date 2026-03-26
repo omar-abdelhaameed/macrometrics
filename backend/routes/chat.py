@@ -27,25 +27,19 @@ class ChatResponse(BaseModel):
     user_context: Optional[dict] = None
 
 
-# ==================== GEMINI CONFIG ====================
-# Free tier limits (2026):
-#   gemini-2.5-flash      → 10 RPM, 250 RPD   (smart)
-#   gemini-2.5-flash-lite → 15 RPM, 1000 RPD  (fast/simple)
+# ==================== AI CONFIG ====================
+# Strategy:
+#   Primary  → Gemini 2.5 Flash (250 req/day free) — always, no routing
+#   Fallback → Groq Llama-3 (1000 req/day free)    — auto when Gemini hits 429
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-_BASE          = "https://generativelanguage.googleapis.com/v1beta/models"
-FLASH_URL      = f"{_BASE}/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-FLASH_LITE_URL = f"{_BASE}/gemini-2.5-flash-lite:generateContent?key={GEMINI_API_KEY}"
+GROQ_API_KEY   = os.environ.get("GROQ_API_KEY", "")
 
-_COMPLEX_KW = [
-    "plan","خطة","week","أسبوع","program","برنامج",
-    "why","ليه","how","إزاي","analyze","حلل",
-    "compare","قارن","recommend","اقترح","explain","اشرح",
-    "plateau","ركود","refeed","bulk","cut",
-]
+_GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
+FLASH_URL    = f"{_GEMINI_BASE}/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
-def _pick_url(message: str) -> str:
-    return FLASH_URL if any(kw in message.lower() for kw in _COMPLEX_KW) else FLASH_LITE_URL
+_GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions"
+_GROQ_MODEL = "llama-3.3-70b-versatile"   # 1000 req/day free
 
 
 # ==================== CONTEXT BUILDERS ====================
@@ -234,39 +228,69 @@ Fats     : {f_c} / {f_t} g
         contents.append({"role": role, "parts": [{"text": turn["content"]}]})
     contents.append({"role": "user", "parts": [{"text": user_message}]})
 
-    url = _pick_url(user_message)
+    swap_kw = ["swap","replace","alternative","بديل","تغيير","بدل"]
 
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post(url, json={
-                "system_instruction": {"parts": [{"text": system}]},
-                "contents": contents,
-                "generationConfig": {"temperature": 0.75, "maxOutputTokens": 500},
-            })
+    # ── 1. Try Gemini 2.5 Flash ──────────────────────────────────────────
+    if GEMINI_API_KEY:
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(FLASH_URL, json={
+                    "system_instruction": {"parts": [{"text": system}]},
+                    "contents": contents,
+                    "generationConfig": {"temperature": 0.75, "maxOutputTokens": 500},
+                })
 
-        if resp.status_code == 200:
-            data    = resp.json()
-            ai_text = (
-                data.get("candidates", [{}])[0]
-                .get("content", {}).get("parts", [{}])[0]
-                .get("text", "").strip()
-            )
-            if not ai_text:
-                return _rule_based(user_message, context, db)
+            if resp.status_code == 200:
+                data    = resp.json()
+                ai_text = (
+                    data.get("candidates", [{}])[0]
+                    .get("content", {}).get("parts", [{}])[0]
+                    .get("text", "").strip()
+                )
+                if ai_text:
+                    suggestions = None
+                    if any(kw in user_message.lower() for kw in swap_kw):
+                        suggestions = find_meal_alternatives_from_db(db, user.id, cal_c or 300)
+                    return ai_text, suggestions
 
-            swap_kw     = ["swap","replace","alternative","بديل","تغيير","بدل"]
-            suggestions = None
-            if any(kw in user_message.lower() for kw in swap_kw):
-                suggestions = find_meal_alternatives_from_db(db, user.id, cal_c or 300)
+            elif resp.status_code == 429:
+                print("Gemini quota hit (429) — switching to Groq fallback.")
+            else:
+                print(f"Gemini error {resp.status_code}: {resp.text[:200]}")
 
-            return ai_text, suggestions
-        else:
-            print(f"Gemini API error {resp.status_code}: {resp.text}")
-            return _rule_based(user_message, context, db)
+        except Exception as exc:
+            print(f"Gemini call failed: {exc}")
 
-    except Exception as exc:
-        print(f"Gemini call failed: {exc}")
-        return _rule_based(user_message, context, db)
+    # ── 2. Fallback → Groq Llama-3 (1000 req/day free) ───────────────────
+    if GROQ_API_KEY:
+        try:
+            groq_messages = [{"role": "system", "content": system}]
+            for turn in history[-8:]:
+                groq_messages.append({"role": turn["role"], "content": turn["content"]})
+            groq_messages.append({"role": "user", "content": user_message})
+
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(
+                    _GROQ_URL,
+                    headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
+                    json={"model": _GROQ_MODEL, "messages": groq_messages, "max_tokens": 500, "temperature": 0.75},
+                )
+
+            if resp.status_code == 200:
+                ai_text = resp.json()["choices"][0]["message"]["content"].strip()
+                if ai_text:
+                    suggestions = None
+                    if any(kw in user_message.lower() for kw in swap_kw):
+                        suggestions = find_meal_alternatives_from_db(db, user.id, cal_c or 300)
+                    return ai_text, suggestions
+            else:
+                print(f"Groq error {resp.status_code}: {resp.text[:200]}")
+
+        except Exception as exc:
+            print(f"Groq call failed: {exc}")
+
+    # ── 3. Final fallback → rule-based ────────────────────────────────────
+    return _rule_based(user_message, context, db)
 
 
 # ==================== RULE-BASED FALLBACK ====================

@@ -30,13 +30,45 @@ function AuthRoute({ children }) {
 
 function AppLayout() {
   const [isSidebarExpanded, setIsSidebarExpanded] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
 
   return (
     <div className="min-h-screen bg-[var(--surface)]">
-      <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
+      {/* Mobile hamburger button */}
+      <button
+        className={`fixed top-4 left-4 z-[80] p-2 rounded-lg bg-[var(--surface-container)] text-[var(--on-surface)] md:hidden`}
+        onClick={() => setIsMobileMenuOpen(true)}
+      >
+        <span className="material-icons-outlined">menu</span>
+      </button>
+
+      <Sidebar 
+        isExpanded={isSidebarExpanded} 
+        setIsExpanded={setIsSidebarExpanded}
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+        isMobile={isMobile}
+      />
+      
       <main 
         className="p-4 md:p-8 min-h-screen transition-all duration-300 ease-in-out"
-        style={{ paddingLeft: isSidebarExpanded ? '280px' : window.innerWidth < 768 ? '70px' : '100px' }}
+        style={{ 
+          paddingLeft: isMobile 
+            ? '0px' 
+            : (isSidebarExpanded ? '280px' : '100px'),
+          paddingTop: isMobile ? '60px' : '32px'
+        }}
       >
         <Routes>
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

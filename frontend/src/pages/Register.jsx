@@ -198,7 +198,7 @@ export default function Register() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="auth-field">
                       <label className="text-sm text-[var(--on-surface-variant)] mb-2 block">Password</label>
                       <div className="auth-input-wrap">
@@ -240,7 +240,7 @@ export default function Register() {
                   {/* Gender */}
                   <div className="auth-field">
                     <label className="text-sm text-[var(--on-surface-variant)] mb-3 block">Gender</label>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       {GENDERS.map(g => (
                         <button
                           type="button"
@@ -260,7 +260,7 @@ export default function Register() {
                   </div>
 
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="auth-field">
                       <label className="text-xs text-[var(--on-surface-variant)] mb-2 block">Age</label>
                       <div className="auth-input-wrap py-3">
@@ -359,7 +359,7 @@ export default function Register() {
                     <p className="text-sm text-[var(--on-surface-variant)]">We'll calculate your optimal macros</p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {GOALS.map((goal) => (
                       <motion.button
                         key={goal.value}

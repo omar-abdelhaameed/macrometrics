@@ -473,7 +473,7 @@ export default function Supplements() {
 
                 <div>
                   <label className="block text-sm text-[var(--on-surface-variant)] mb-2">Time of Day</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {TIME_OF_DAY_OPTIONS.map(option => (
                       <button
                         key={option.value}

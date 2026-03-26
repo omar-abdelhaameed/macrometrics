@@ -430,11 +430,15 @@
   }
 
   .analytics-chart-section {
-    @apply grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8;
+    @apply flex flex-col md:flex-row gap-6 mb-8;
   }
 
   .analytics-chart-section > div:first-child {
-    @apply lg:col-span-2;
+    @apply md:flex-2;
+  }
+
+  .analytics-chart-section > div:nth-child(2) {
+    @apply md:flex-1;
   }
 
   .chart-card {
@@ -858,7 +862,7 @@
   }
 
   .activity-chips {
-    @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+    @apply grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4;
   }
 
   .activity-chip {

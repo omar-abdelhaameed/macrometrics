@@ -99,7 +99,7 @@ export default function Profile() {
   return (
     <motion.div className="profile-page" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <div className="page-header">
-        <div className="page-header-row">
+        <div className="page-header-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h2>Athlete Profile</h2>
             <p>Your body composition data and macro targets</p>

@@ -56,7 +56,7 @@ export default function AIChat() {
     <>
       {/* Floating Bubble */}
       <motion.button
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[var(--primary-container)] text-[var(--surface)] shadow-neon flex items-center justify-center z-[60]"
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[var(--primary-container)] text-[var(--surface)] shadow-neon flex items-center justify-center z-[70]"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
@@ -69,7 +69,7 @@ export default function AIChat() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed top-0 right-0 w-full max-w-md h-full bg-[var(--surface-container)] border-l border-[var(--surface-container-high)] shadow-2xl z-[60] flex flex-col"
+            className="fixed top-0 right-0 w-full max-w-md h-full bg-[var(--surface-container)] border-l border-[var(--surface-container-high)] shadow-2xl z-[70] flex flex-col"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}

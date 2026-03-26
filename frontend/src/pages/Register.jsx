@@ -303,7 +303,7 @@ export default function Register() {
                   </div>
 
                   {/* Unit Toggle */}
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <button
                       type="button"
                       onClick={() => set('preferred_unit', 'metric')}
@@ -418,12 +418,12 @@ export default function Register() {
           </AnimatePresence>
 
           {/* Navigation */}
-          <div className="flex items-center gap-4 mt-10">
+          <div className="flex flex-col sm:flex-row items-center gap-4 mt-10">
             {step > 0 && (
               <button 
                 type="button" 
                 onClick={prevStep}
-                className="px-6 py-3 rounded-xl bg-[var(--surface-container)] text-[var(--on-surface-variant)] font-medium hover:bg-[var(--surface-container-high)] transition-all flex items-center gap-2"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[var(--surface-container)] text-[var(--on-surface-variant)] font-medium hover:bg-[var(--surface-container-high)] transition-all flex items-center justify-center gap-2"
               >
                 <span className="material-icons-outlined">arrow_back</span>
                 Back
@@ -434,7 +434,7 @@ export default function Register() {
               <button 
                 type="button" 
                 onClick={nextStep}
-                className="auth-submit px-8 py-3"
+                className="auth-submit w-full sm:w-auto px-8 py-3"
               >
                 Continue
                 <span className="material-icons-outlined ml-1">arrow_forward</span>
@@ -442,7 +442,7 @@ export default function Register() {
             ) : (
               <button 
                 type="button" 
-                className="auth-submit px-8 py-3"
+                className="auth-submit w-full sm:w-auto px-8 py-3"
                 disabled={loading}
                 onClick={handleSubmit}
               >

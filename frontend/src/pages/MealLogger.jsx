@@ -22,6 +22,7 @@ export default function MealLogger() {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [mealType, setMealType] = useState('lunch');
   const [logging, setLogging] = useState(false);
+  const [activeMobileTab, setActiveMobileTab] = useState('search');
   const toast = useToast();
 
   useEffect(() => {
@@ -139,9 +140,33 @@ export default function MealLogger() {
         </div>
       </div>
 
+      {/* Mobile Tab Toggle */}
+      <div className="flex lg:hidden mb-4 border-b border-[var(--outline-variant)]">
+        <button
+          onClick={() => setActiveMobileTab('search')}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${
+            activeMobileTab === 'search'
+              ? 'text-[var(--primary)] border-b-2 border-[var(--primary)]'
+              : 'text-[var(--on-surface-variant)]'
+          }`}
+        >
+          Search
+        </button>
+        <button
+          onClick={() => setActiveMobileTab('builder')}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${
+            activeMobileTab === 'builder'
+              ? 'text-[var(--primary)] border-b-2 border-[var(--primary)]'
+              : 'text-[var(--on-surface-variant)]'
+          }`}
+        >
+          Builder
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6 flex flex-col-reverse lg:grid">
         {/* ── Left: Meal Builder ── */}
-        <div className="meal-builder">
+        <div className={`meal-builder lg:block ${activeMobileTab === 'builder' ? 'block' : 'hidden'}`}>
           <div className="meal-builder__title">
             <span className="material-icons-outlined text-[var(--primary)]">restaurant</span>
             Meal Builder
@@ -235,7 +260,7 @@ export default function MealLogger() {
         )}
 
         {/* ── Left: Ingredient Search ── */}
-        <div className="ingredient-panel">
+        <div className={`ingredient-panel lg:block ${activeMobileTab === 'search' ? 'block' : 'hidden'}`}>
           <div className="search-mode-toggle">
             <button className={`search-mode-btn ${searchMode === 'usda' ? 'active' : ''}`} onClick={() => setSearchMode('usda')}>
               <span className="material-icons-outlined" style={{ fontSize: 16 }}>travel_explore</span>

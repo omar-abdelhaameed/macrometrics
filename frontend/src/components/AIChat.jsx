@@ -56,7 +56,7 @@ export default function AIChat() {
     <>
       {/* Floating Bubble */}
       <motion.button
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[var(--primary-container)] text-[var(--surface)] shadow-neon flex items-center justify-center z-[70]"
+        className="fixed bottom-4 right-4 w-14 h-14 rounded-full bg-[var(--primary-container)] text-[var(--surface)] shadow-neon flex items-center justify-center z-[70]"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}

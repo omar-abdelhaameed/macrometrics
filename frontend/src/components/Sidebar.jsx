@@ -65,7 +65,7 @@ export default function Sidebar({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-[74] md:hidden"
+      className="fixed inset-0 bg-black/50 z-[67] lg:hidden"
       onClick={() => setIsMobileMenuOpen(false)}
     />
   );
@@ -77,7 +77,7 @@ export default function Sidebar({
       animate={{ x: 0 }}
       exit={{ x: '-100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed top-0 left-0 w-72 h-full bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] z-[75] flex flex-col md:hidden"
+      className="fixed top-0 left-0 w-72 h-full bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] z-[68] flex flex-col lg:hidden"
     >
       {/* Logo */}
       <div className="flex items-center h-20 px-4 mt-2 mb-2 overflow-hidden">

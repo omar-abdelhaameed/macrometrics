@@ -39,11 +39,16 @@ MacroMetrics is a production-ready, commercial-grade fitness SaaS platform that 
 - **Streak Tracking** - Logging consistency
 - **Refeed Engine** - Plateau detection & refeed day suggestions
 
-### 6. Premium UX
-- **Tailwind CSS 4** with custom dark mode design tokens
+### 6. Premium Subscription (Coming Soon)
+- **$10/month** - Unlock elite features
+- Everything in Free + AI Coach, USDA database, advanced analytics, supplement AI, priority support
+
+### 7. Premium UX
+- **Tailwind CSS 4** with custom dark/light mode design tokens
 - **Framer Motion** animations
 - **Mobile-First** responsive layout
 - **JWT Authentication** with theme persistence
+- **Expandable Sidebar** with hover animations
 
 ---
 
@@ -54,9 +59,10 @@ MacroMetrics is a production-ready, commercial-grade fitness SaaS platform that 
 | Frontend | React 19, Vite 8, Tailwind CSS 4, Framer Motion, Recharts |
 | Backend | FastAPI, SQLAlchemy 2.0, Pydantic 2.x |
 | Database | PostgreSQL (Alembic migrations) |
-| Auth | JWT (48hr), bcrypt (rounds=12), SlowAPI rate limiting |
+| Auth | JWT (48hr), pbkdf2_sha256, SlowAPI rate limiting |
 | AI | Gemini 2.5 Flash (primary), Flash-Lite (fallback) |
 | External APIs | USDA FoodData Central |
+| Deployment | Vercel (Frontend), Render (Backend + PostgreSQL) |
 
 ---
 
@@ -66,32 +72,34 @@ MacroMetrics is a production-ready, commercial-grade fitness SaaS platform that 
 MacroMetrics/
 ├── frontend/                    # React + Vite + Tailwind
 │   ├── src/
-│   │   ├── pages/              # Dashboard, MealLogger, Profile, Supplements
-│   │   ├── components/         # Sidebar, AIChat, ToastProvider
+│   │   ├── pages/              # Dashboard, MealLogger, Profile, Supplements, Analytics, Premium
+│   │   ├── components/         # Sidebar, AIChat, WaterTracker, NumberInput, ToastProvider
 │   │   ├── contexts/           # AuthContext, ThemeContext
-│   │   └── api.js              # API client
+│   │   └── api.js             # API client with timeout handling
 │   └── package.json
 │
 ├── backend/                     # FastAPI
 │   ├── routes/                 # API endpoints
 │   │   ├── auth.py            # Register, Login
-│   │   ├── supplements.py      # Supplement CRUD + logging
-│   │   ├── ingredients.py      # Food search
+│   │   ├── supplements.py     # Supplement CRUD + logging
+│   │   ├── ingredients.py     # Food search
+│   │   ├── analytics.py      # Weight trends, macro composition
+│   │   ├── chat.py           # AI Coach
 │   │   └── ...
-│   ├── services/
-│   │   ├── nutrition.py        # Mifflin-St Jeor engine
-│   │   ├── supplements.py     # AI recommendations
-│   │   └── usda.py            # USDA API client
 │   ├── models.py              # SQLAlchemy models
-│   ├── schemas.py              # Pydantic schemas
-│   ├── main.py                # App entry
-│   ├── alembic/               # Database migrations
-│   └── data/                  # Seed scripts
+│   ├── schemas.py            # Pydantic schemas
+│   ├── main.py               # App entry + seed functions
+│   ├── database.py           # SQLAlchemy engine with Neon URL fix
+│   ├── auth.py               # JWT utilities with dev fallback
+│   ├── alembic/              # Database migrations
+│   └── data/                 # Seed scripts
 │       ├── seed_golden_foods.py
 │       ├── seed_egyptian_foods.py
 │       └── seed_supplements.py
 │
-└── docs/                       # API documentation
+├── docker-compose.yml          # Local development
+├── DEPLOYMENT.md              # Production deployment guide
+└── README.md
 ```
 
 ---
@@ -113,6 +121,7 @@ cd MacroMetrics
 # Backend setup
 cd backend
 python -m venv venv
+
 # Windows:
 venv\Scripts\activate
 # Linux/Mac:
@@ -130,10 +139,10 @@ npm install
 Create `backend/.env`:
 
 ```env
-# Database
+# Database (fallback to SQLite for local dev if not set)
 DATABASE_URL=postgresql://username:password@localhost:5432/macrometrics
 
-# Security (generate with: python -c "import secrets; print(secrets.token_hex(32))")
+# Security (generate with: openssl rand -hex 32)
 JWT_SECRET=your-256-bit-secret-key
 
 # USDA FoodData Central (free API key)
@@ -142,33 +151,24 @@ NUTRITION_API_KEY=your-usda-key
 # Google Gemini AI (optional - for AI Coach)
 GEMINI_API_KEY=your-gemini-key
 
-# App Environment
-APP_ENV=development
+# Frontend URL for CORS (local dev)
+FRONTEND_URL=http://localhost:5173
+```
+
+Create `frontend/.env` (optional for local):
+
+```env
+VITE_API_URL=http://localhost:8000
 ```
 
 ### 3. Database Migrations
 
 ```bash
 cd backend
-
-# Run Alembic migrations
 python -m alembic upgrade head
 ```
 
-### 4. Seed Database
-
-```bash
-# Seed golden foods (curated priority foods)
-python -m data.seed_golden_foods
-
-# Seed Egyptian foods (Arabic food database)
-python -m data.seed_egyptian_foods
-
-# Seed supplement catalog (22+ supplements)
-python -m data.seed_supplements
-```
-
-### 5. Run Development Servers
+### 4. Run Development Servers
 
 ```bash
 # Terminal 1 - Backend
@@ -180,7 +180,7 @@ cd frontend
 npm run dev
 ```
 
-### 6. Access
+### 5. Access
 
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:8000
@@ -194,15 +194,23 @@ npm run dev
 |----------|--------|-------------|
 | `/auth/register` | POST | User registration with auto macro calculation |
 | `/auth/login` | POST | JWT token authentication |
+| `/users/me` | GET/PUT | Get or update user profile |
+| `/ingredients` | GET | List golden foods database |
 | `/ingredients/search` | GET | Hybrid food search (Golden + USDA) |
+| `/ingredients/save-from-usda` | POST | Save USDA food to user library |
+| `/meals` | GET/POST | Log meals |
+| `/daily-summary` | GET | Daily macro progress |
+| `/daily-log/{id}/toggle-refeed` | PATCH | Toggle refeed day |
 | `/supplements/catalog` | GET | All available supplements |
-| `/supplements/recommendations` | GET | AI recommendations based on user profile |
-| `/supplements/my-stack` | GET/POST | User's personal supplement stack |
-| `/supplements/log` | POST | Check off supplement for today |
-| `/meals` | POST | Log a meal with ingredients |
-| `/daily-summary/{date}` | GET | Daily macro progress |
+| `/supplements/recommendations` | GET | AI recommendations based on profile |
+| `/supplements/my-stack` | GET/POST/DELETE | User's personal supplement stack |
+| `/supplements/log` | POST | Log supplement taken |
+| `/analytics/summary` | GET | Analytics overview |
+| `/analytics/weight-trend` | GET | 30-day weight trends |
+| `/analytics/macro-composition` | GET | Macro breakdown pie chart |
+| `/analytics/weight-plateau` | GET | Plateau detection |
 | `/chat` | POST | AI Coach conversation |
-| `/analytics/weight-trend` | GET | 30-day weight analytics |
+| `/chat/context` | GET | User context for AI |
 
 ---
 
@@ -210,20 +218,64 @@ npm run dev
 
 - **Rate Limiting** - SlowAPI (Auth: 5/min, Search: 30/min, Chat: 10/min)
 - **Input Validation** - Pydantic with EmailStr, Field constraints, Literal enums
-- **JWT Authentication** - 48-hour expiry, bcrypt rounds=12
-- **Environment Secrets** - Required DATABASE_URL, JWT_SECRET (no fallbacks)
-- **CORS Protection** - Configurable origins
+- **JWT Authentication** - 48-hour expiry, pbkdf2_sha256
+- **Dynamic CORS** - Configurable origins via FRONTEND_URL env variable
+- **SQL Injection Protection** - SQLAlchemy ORM with parameterized queries
 
 ---
 
 ## Production Deployment
 
-1. Set `APP_ENV=production` in environment
-2. Configure PostgreSQL connection pooling
-3. Set up reverse proxy (nginx) with SSL
-4. Configure CORS in `main.py` for production domain
-5. Run: `alembic upgrade head` (not create_all)
+### Stack
+- **Frontend**: Vercel
+- **Backend**: Render (Web Service)
+- **Database**: Render (PostgreSQL)
+
+### Environment Variables
+
+**Render Backend:**
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string from Render |
+| `JWT_SECRET` | Secure token secret (generate with `openssl rand -hex 32`) |
+| `FRONTEND_URL` | Your Vercel frontend URL |
+| `NUTRITION_API_KEY` | USDA API key |
+| `GEMINI_API_KEY` | Google Gemini API key |
+
+**Vercel Frontend:**
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Your Render backend URL |
+
+### Quick Deploy
+
+1. Create PostgreSQL on Render → copy connection string
+2. Deploy Backend to Render (GitHub) with env vars
+3. Deploy Frontend to Vercel with VITE_API_URL
+4. Update FRONTEND_URL on Render to match your Vercel domain
+
+See `DEPLOYMENT.md` for detailed step-by-step guide.
+
+---
+
+## Premium Subscription
+
+Coming soon at **$10/month**:
+
+| Feature | Free | Premium |
+|---------|------|---------|
+| Basic macro tracking | ✅ | ✅ |
+| Manual food logging | ✅ | ✅ |
+| Daily summary dashboard | ✅ | ✅ |
+| Golden Foods database | ✅ | ✅ |
+| AI Coach (Gemini) | ❌ | ✅ |
+| USDA database (900k+ foods) | ❌ | ✅ |
+| Advanced analytics (30-day+) | ❌ | ✅ |
+| Supplement tracking | ❌ | ✅ |
+| AI supplement recommendations | ❌ | ✅ |
+| Priority support | ❌ | ✅ |
 
 ---
 
 *MacroMetrics V2.0 - Science-Backed Nutrition for Elite Athletes*
+*Build with ❤️ for performance athletes worldwide*

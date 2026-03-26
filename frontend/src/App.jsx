@@ -47,7 +47,7 @@ function AppLayout() {
     <div className="min-h-screen bg-[var(--surface)]">
       {/* Mobile hamburger button */}
       <button
-        className={`fixed top-4 left-4 z-[80] p-2 rounded-lg bg-[var(--surface-container)] text-[var(--on-surface)] md:hidden`}
+        className={`fixed top-4 right-4 z-[65] p-2 rounded-lg bg-[var(--surface-container)] text-[var(--on-surface)] md:hidden ${isMobileMenuOpen ? 'hidden' : ''}`}
         onClick={() => setIsMobileMenuOpen(true)}
       >
         <span className="material-icons-outlined">menu</span>

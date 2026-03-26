@@ -139,7 +139,7 @@ export default function MealLogger() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6 flex flex-col-reverse lg:grid">
         {/* ── Left: Meal Builder ── */}
         <div className="meal-builder">
           <div className="meal-builder__title">
@@ -216,6 +216,23 @@ export default function MealLogger() {
             </div>
           )}
         </div>
+
+        {/* Sticky Mobile Summary Bar */}
+        {selectedIngredients.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-[var(--surface-container)] border-t border-[var(--outline-variant)] md:hidden flex items-center justify-between gap-4 z-50">
+            <div className="flex flex-col">
+              <span className="text-xs text-[var(--on-surface-variant)]">Total</span>
+              <span className="text-lg font-bold text-[var(--primary)]">{Math.round(totals.calories)} kcal</span>
+            </div>
+            <button 
+              className="px-6 py-3 rounded-xl bg-[var(--primary)] text-[var(--surface)] font-bold text-sm"
+              onClick={handleLogMeal}
+              disabled={logging}
+            >
+              {logging ? '...' : 'Log Meal'}
+            </button>
+          </div>
+        )}
 
         {/* ── Left: Ingredient Search ── */}
         <div className="ingredient-panel">

@@ -35,8 +35,8 @@ function AppLayout() {
     <div className="min-h-screen bg-[var(--surface)]">
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       <main 
-        className="p-8 min-h-screen transition-all duration-300 ease-in-out"
-        style={{ paddingLeft: isSidebarExpanded ? '280px' : '100px' }}
+        className="p-4 md:p-8 min-h-screen transition-all duration-300 ease-in-out"
+        style={{ paddingLeft: isSidebarExpanded ? '280px' : window.innerWidth < 768 ? '70px' : '100px' }}
       >
         <Routes>
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

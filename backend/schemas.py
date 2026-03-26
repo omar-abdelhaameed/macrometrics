@@ -28,7 +28,7 @@ class MealIngredientIn(BaseModel):
 
 class MealIn(BaseModel):
     date: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$")
-    meal_type: Literal["breakfast", "lunch", "dinner", "snack"] = "lunch"
+    meal_type: Literal["breakfast", "lunch", "dinner", "snack", "pre_workout", "post_workout"] = "lunch"
     ingredients: List[MealIngredientIn] = Field(..., min_length=1, max_length=50)
 
 

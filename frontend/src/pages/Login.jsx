@@ -44,7 +44,7 @@ export default function Login() {
             fitness_center
           </span>
           <h1>MacroMetrics</h1>
-          <p>Performance Lab</p>
+          <p>Elloader Labs</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">

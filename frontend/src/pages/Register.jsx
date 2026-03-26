@@ -134,7 +134,7 @@ export default function Register() {
             <span className="material-icons-outlined text-3xl text-[var(--surface)]">fitness_center</span>
           </div>
           <h1 className="text-3xl font-bold">MacroMetrics</h1>
-          <p className="text-xs uppercase tracking-[0.25em] text-[var(--on-surface-variant)]">Performance Lab</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--on-surface-variant)]">Elloader Labs</p>
         </div>
 
         {/* Step indicator */}

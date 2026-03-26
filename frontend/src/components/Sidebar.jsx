@@ -189,7 +189,7 @@ export default function Sidebar({
             MACROMETRICS
           </h1>
           <span className="text-[9px] text-[var(--on-surface-variant)] uppercase tracking-[0.2em] font-mono whitespace-nowrap">
-            Performance Lab
+            Elloader Labs
           </span>
         </motion.div>
       </div>

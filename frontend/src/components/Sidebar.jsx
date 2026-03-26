@@ -97,7 +97,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }) {
       {/* ── Bottom ── */}
       <div className="sidebar-bottom pb-6 pt-3 border-t border-[var(--outline-variant)] flex flex-col gap-1 overflow-hidden">
 
-        {/* Premium badge */}
+        {/* Premium badge
         {user?.is_pro_user && (
           <div
             className={`flex items-center px-3 mx-3 my-1 h-12 rounded-xl transition-all duration-300 overflow-hidden ${
@@ -129,7 +129,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }) {
               </span>
             </motion.div>
           </div>
-        )}
+        )} */}
 
         {/* Profile */}
         {user && (
